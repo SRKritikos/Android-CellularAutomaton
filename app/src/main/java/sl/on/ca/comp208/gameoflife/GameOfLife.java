@@ -5,7 +5,9 @@ package sl.on.ca.comp208.gameoflife;
  */
 
 public class GameOfLife implements IRuleImplementor {
-    AutomatonHelper automatonHelper;
+    private AutomatonHelper automatonHelper;
+    private boolean[][] currentGeneration;
+    private boolean[][] nextGeneration;
 
     public GameOfLife(AutomatonHelper automatonHelper) {
         this.automatonHelper = automatonHelper;
@@ -23,14 +25,32 @@ public class GameOfLife implements IRuleImplementor {
     }
 
     @Override
-    public boolean[][] applyRule(boolean[][] board, int numberOfRows, int numberOfColumns) {
-        boolean[][] newBoard = new boolean[numberOfRows][numberOfColumns];
+    public int shouldDraw( int row, int col) {
+        int cellState = -1;
+        boolean isAliveNow = this.currentGeneration[row][col];
+        boolean isAliveNextGen = this.nextGeneration[row][col];
+        if (!isAliveNow && isAliveNextGen) {
+            cellState = 1;
+        } else if (isAliveNow && !isAliveNextGen) {
+            cellState = 0;
+        }
+        return cellState;
+    }
+
+    @Override
+    public void applyRule(boolean[][] grid, int numberOfRows, int numberOfColumns) {
+        this.currentGeneration = grid;
+        this.nextGeneration = new boolean[numberOfRows][numberOfColumns];
         for (int row = 0; row < numberOfRows; row++) {
             for (int col = 0; col < numberOfColumns; col++) {
-                int numberOfNeighbours = this.automatonHelper.getNeighbourCount(board, row, col, numberOfRows, numberOfColumns);
-                newBoard[row][col] = this.determineLife(numberOfNeighbours, board[row][col]);
+                int numberOfNeighbours = this.automatonHelper.getNeighbourCount(this.currentGeneration, row, col, numberOfRows, numberOfColumns);
+                this.nextGeneration[row][col] = this.determineLife(numberOfNeighbours, this.currentGeneration[row][col]);
             }
         }
-        return newBoard;
+    }
+
+    @Override
+    public boolean[][] getNextGeneration() {
+        return this.nextGeneration;
     }
 }
