@@ -13,25 +13,14 @@ public class GameOfLife implements IRuleImplementor {
         this.automatonHelper = automatonHelper;
     }
 
-    private boolean determineLife(int numberOfNeighbours, boolean isAlive) {
-        if (isAlive && (numberOfNeighbours < 2 || numberOfNeighbours > 3) ) {
-            isAlive = false;
-        } else if (isAlive && (numberOfNeighbours == 3 || numberOfNeighbours == 2) ) {
-            isAlive = true;
-        } else if (!isAlive && numberOfNeighbours == 3) {
-            isAlive = true;
-        }
-        return isAlive;
-    }
-
     @Override
     public int shouldDraw( int row, int col) {
         int cellState = -1;
         boolean isAliveNow = this.currentGeneration[row][col];
         boolean isAliveNextGen = this.nextGeneration[row][col];
-        if (!isAliveNow && isAliveNextGen) {
+        if (isAliveNextGen) {
             cellState = 1;
-        } else if (isAliveNow && !isAliveNextGen) {
+        } else if (!isAliveNextGen) {
             cellState = 0;
         }
         return cellState;
@@ -52,5 +41,16 @@ public class GameOfLife implements IRuleImplementor {
     @Override
     public boolean[][] getNextGeneration() {
         return this.nextGeneration;
+    }
+
+    private boolean determineLife(int numberOfNeighbours, boolean isAlive) {
+        if (isAlive && (numberOfNeighbours < 2 || numberOfNeighbours > 3) ) {
+            isAlive = false;
+        } else if (isAlive && (numberOfNeighbours == 3 || numberOfNeighbours == 2) ) {
+            isAlive = true;
+        } else if (!isAlive && numberOfNeighbours == 3) {
+            isAlive = true;
+        }
+        return isAlive;
     }
 }

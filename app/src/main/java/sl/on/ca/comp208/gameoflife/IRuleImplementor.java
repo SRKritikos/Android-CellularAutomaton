@@ -10,7 +10,6 @@ public interface IRuleImplementor {
      *
      * This function should be used to populate the next generation of the automaton
      *
-     *
      * @param grid the current generation.
      * @param numberOfRows the number of rows of the grid.
      * @param numberOfColumns the number of columns of the grid.
