@@ -1,6 +1,4 @@
-package sl.on.ca.comp208.gameoflife;
-
-import android.util.Log;
+package sl.on.ca.comp208.gameoflife.PatternProducers;
 
 /**
  * Created by Steven on 2/8/2017.
@@ -13,16 +11,37 @@ public class GliderGunCreator implements IPatternProducer{
     final int GLIDER_MIN_ROW = -5;
 
     @Override
-    public boolean[][] drawOnGrid(boolean[][] grid, int rowTouched, int colTouched,
-                                  int numberOfRows , int numberOfColumns) {
-        boolean isInsideColBounds = this.determineColumnBounds(colTouched, numberOfColumns);
-        boolean isInsideRowBounds = this.determineRowBounds(rowTouched, numberOfRows);
+    public boolean[][] drawPatternOnGrid(boolean[][] grid, int rowTouched, int colTouched,
+                                         int numberOfRows , int numberOfColumns) {
+        boolean isInsideColBounds = this.determineColumnBounds(rowTouched, numberOfColumns);
+        boolean isInsideRowBounds = this.determineRowBounds(colTouched, numberOfRows);
         if (isInsideColBounds && isInsideRowBounds) {
-            Log.i("glidercreator", "created gun");
-            this.drawLeftSide(grid, rowTouched, colTouched);
-            this.drawRightSide(grid, rowTouched, colTouched);
+            this.drawLeftSide(grid, colTouched, rowTouched);
+            this.drawRightSide(grid, colTouched, rowTouched);
         }
         return grid;
+    }
+
+    @Override
+    public boolean determineColumnBounds(int colTouched, int numberOfColumns) {
+        if (colTouched + GLIDER_MAX_COL >= numberOfColumns) {
+            return false;
+        }
+        if (colTouched + GLIDER_MIN_COL < 0) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean determineRowBounds(int rowTouched, int numberOfRows) {
+        if (rowTouched + GLIDER_MAX_ROW >= numberOfRows) {
+            return false;
+        }
+        if (rowTouched + GLIDER_MIN_ROW < 0) {
+            return  false;
+        }
+        return  true;
     }
 
     private void drawRightSide(boolean[][] grid, int row, int col) {
@@ -65,25 +84,5 @@ public class GliderGunCreator implements IPatternProducer{
         grid[row - 1][col - 18] = true;
         grid[row][col - 17] = true;
         grid[row][col - 18] = true;
-    }
-
-    private boolean determineColumnBounds(int colTouched, int numberOfColumns) {
-        if (colTouched + GLIDER_MAX_COL >= numberOfColumns) {
-            return false;
-        }
-        if (colTouched + GLIDER_MIN_COL < 0) {
-            return false;
-        }
-        return true;
-    }
-
-    private boolean determineRowBounds(int rowTouched, int numberOfRows) {
-        if (rowTouched + GLIDER_MAX_ROW >= numberOfRows) {
-            return false;
-        }
-        if (rowTouched + GLIDER_MIN_ROW < 0) {
-            return  false;
-        }
-        return  true;
     }
 }

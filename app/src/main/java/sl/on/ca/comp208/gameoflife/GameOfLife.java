@@ -16,11 +16,14 @@ public class GameOfLife implements IRuleImplementor {
     @Override
     public int shouldDraw( int row, int col) {
         int cellState = -1;
+        if (this.currentGeneration == null) {
+
+        }
         boolean isAliveNow = this.currentGeneration[row][col];
         boolean isAliveNextGen = this.nextGeneration[row][col];
         if (isAliveNextGen) {
             cellState = 1;
-        } else if (!isAliveNextGen) {
+        } else if (isAliveNow && !isAliveNextGen) {
             cellState = 0;
         }
         return cellState;

@@ -6,9 +6,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
 
-import java.util.Timer;
+import sl.on.ca.comp208.gameoflife.PatternProducers.PatternFactory;
+import sl.on.ca.comp208.gameoflife.PatternProducers.IPatternProducer;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,8 +18,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         view = (DrawView) findViewById(R.id.canvas);
-        GliderGunCreator gliderGunCreator = new GliderGunCreator();
-        view.setPatternProducer(gliderGunCreator);
     }
 
     @Override
@@ -33,16 +31,19 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.startPauseBtn:
-                Log.i("activity", "Button clcicked");
                 if (item.getTitle().toString().equals("Start")) {
-                    Log.i("activity", item.getTitle().toString());
                     view.startTimer();
                     item.setTitle(R.string.pause_game);
                 } else if (item.getTitle().toString().equals("Pause")) {
-                    Log.i("activity", "PAUSE");
                     view.stopTimer();
                     item.setTitle(R.string.start_game);
                 }
+                break;
+            case R.id.createGliderBtn:
+            case R.id.createGliderGunBtn:
+                IPatternProducer patternProducer = PatternFactory.getInstance(item.getItemId());
+                view.setPatternProducer(patternProducer);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

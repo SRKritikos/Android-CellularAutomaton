@@ -2,4 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/startPauseBtn"
         android:title="@string/start_game"/>
+    <item android:title="Create">
+        <menu>
+            <item android:title="Glider"
+                android:id="@+id/createGliderBtn"/>
+            <item android:id="@+id/createGliderGunBtn"
+                android:title="Glider Gun"/>
+        </menu>
+    </item>
 </menu>

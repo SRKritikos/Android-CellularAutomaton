@@ -30,5 +30,4 @@ public interface IRuleImplementor {
      * @return next generation's grid
      */
     boolean[][] getNextGeneration();
-
 }
