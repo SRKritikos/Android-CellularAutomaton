@@ -2,13 +2,12 @@ package sl.on.ca.comp208.gameoflife;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import sl.on.ca.comp208.gameoflife.PatternProducers.PatternFactory;
-import sl.on.ca.comp208.gameoflife.PatternProducers.IPatternProducer;
+import sl.on.ca.comp208.gameoflife.patternproducers.PatternFactory;
+import sl.on.ca.comp208.gameoflife.patternproducers.IPatternProducer;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         view = (DrawView) findViewById(R.id.canvas);
+
     }
 
     @Override

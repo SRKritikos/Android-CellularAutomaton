@@ -9,7 +9,10 @@ import android.view.SurfaceView;
 
 import java.util.Timer;
 
-import sl.on.ca.comp208.gameoflife.PatternProducers.IPatternProducer;
+import sl.on.ca.comp208.gameoflife.automatons.AutomatonHelper;
+import sl.on.ca.comp208.gameoflife.automatons.GameOfLife;
+import sl.on.ca.comp208.gameoflife.colors.CanvasColors;
+import sl.on.ca.comp208.gameoflife.patternproducers.IPatternProducer;
 
 /**
  * Created by srostantkritikos06 on 1/30/2017.
@@ -23,6 +26,7 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
     private IPatternProducer patternProducer;
     private final int NUMBER_OF_COLS = 100;
     private final int NUMBER_OF_ROWS = 100;
+    private CanvasColors canvasColors;
 
     public DrawView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -46,17 +50,19 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
         AutomatonHelper automatonHelper = new AutomatonHelper();
         GameOfLife gameOfLife = new GameOfLife(automatonHelper);
-        this.gameThread = new GameThread(gameOfLife, surfaceHolder, getWidth(), getHeight(), NUMBER_OF_ROWS, NUMBER_OF_COLS);
+        this.gameThread = new GameThread(gameOfLife, surfaceHolder,
+                                         getWidth(), getHeight(),
+                                         NUMBER_OF_ROWS, NUMBER_OF_COLS,
+                                         this.canvasColors.getRectColor(),
+                                         this.canvasColors.getCanvasColor());
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder surfaceHolder, int format, int width, int height) {
-
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-
     }
 
     @Override
@@ -65,9 +71,10 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
         if (action == MotionEvent.ACTION_DOWN) {
             int x = (int) event.getX();
             int y = (int) event.getY();
-            int row = y / (getWidth() / NUMBER_OF_ROWS);
-            int col = x / (getHeight() / NUMBER_OF_COLS) ;
-            this.gridInitialState = this.patternProducer.drawPatternOnGrid(this.gridInitialState, row, col, NUMBER_OF_ROWS, NUMBER_OF_COLS);
+            int row = y / (getHeight() / NUMBER_OF_ROWS);
+            int col = x / (getWidth() / NUMBER_OF_COLS) ;
+            this.gridInitialState = this.patternProducer
+                    .drawPatternOnGrid(this.gridInitialState, row, col, NUMBER_OF_ROWS, NUMBER_OF_COLS);
             this.gameThread.initializeGrid(gridInitialState);
         }
         return super.onTouchEvent(event);
@@ -92,5 +99,9 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
 
     public void setPatternProducer(IPatternProducer patternProducer) {
         this.patternProducer = patternProducer;
+    }
+
+    public void setCanvasColors(CanvasColors canvasColors) {
+        this.canvasColors = canvasColors;
     }
 }

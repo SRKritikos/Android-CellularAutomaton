@@ -1,4 +1,4 @@
-package sl.on.ca.comp208.gameoflife;
+package sl.on.ca.comp208.gameoflife.automatons;
 
 /**
  * Created by Steven on 2/1/2017.

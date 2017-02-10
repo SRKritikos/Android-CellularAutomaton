@@ -1,4 +1,4 @@
-package sl.on.ca.comp208.gameoflife.PatternProducers;
+package sl.on.ca.comp208.gameoflife.patternproducers;
 
 /**
  * Created by Steven on 2/9/2017.

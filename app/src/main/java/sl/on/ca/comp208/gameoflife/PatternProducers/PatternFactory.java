@@ -1,4 +1,4 @@
-package sl.on.ca.comp208.gameoflife.PatternProducers;
+package sl.on.ca.comp208.gameoflife.patternproducers;
 
 import java.util.HashMap;
 import java.util.Map;
