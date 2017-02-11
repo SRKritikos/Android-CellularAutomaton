@@ -53,8 +53,7 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
         this.gameThread = new GameThread(gameOfLife, surfaceHolder,
                                          getWidth(), getHeight(),
                                          NUMBER_OF_ROWS, NUMBER_OF_COLS,
-                                         this.canvasColors.getRectColor(),
-                                         this.canvasColors.getCanvasColor());
+                                         new CanvasColors.CanvasColorsBuilder(context).build());
     }
 
     @Override

@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.view.SurfaceHolder;
 
 import sl.on.ca.comp208.gameoflife.automatons.IRuleImplementor;
+import sl.on.ca.comp208.gameoflife.colors.CanvasColors;
 
 /**
  * Created by Steven on 2/8/2017.
@@ -23,21 +24,21 @@ public class GameThread extends Thread {
     private int width;
     private Bitmap bitmap;
     private Canvas bitmapCanvas;
-
+    private CanvasColors canvasColors;
 
     public GameThread(IRuleImplementor ruleImplementor, SurfaceHolder holder,
                       int width, int height, int numberOfRows, int numberOfColumns,
-                      int canvasColor, int rectColor) {
+                      CanvasColors canvasColors) {
         this.ruleImplementor = ruleImplementor;
         this.holder = holder;
         this.height = height;
         this.width = width;
         this.numberOfRows = numberOfRows;
         this.numberOfColumns = numberOfColumns;
+        this.canvasColors = canvasColors;
         this.rectPaint = new Paint();
         this.canvasPaint = new Paint();
-        this.rectPaint.setColor(canvasColor);
-        this.canvasPaint.setColor(rectColor);
+        this.canvasPaint.setColor(this.canvasColors.getCanvasColor());
         this.canvasPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         this.rectPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         this.bitmap = Bitmap.createBitmap(this.width, this.height, Bitmap.Config.ARGB_8888);
@@ -60,6 +61,7 @@ public class GameThread extends Thread {
     }
 
     private void drawGridOnBitmapCanvas() {
+        this.rectPaint.setColor(this.canvasColors.getRectColor());
         int cellWidth = this.width / this.numberOfRows;
         int cellHeight = this.height / this.numberOfColumns;
         for (int row = 0; row < this.numberOfRows; row++) {

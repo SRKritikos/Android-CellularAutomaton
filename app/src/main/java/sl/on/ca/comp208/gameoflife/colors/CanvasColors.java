@@ -78,15 +78,15 @@ public class CanvasColors {
 
 
         public CanvasColorsBuilder(Context context) {
-            this(context, "black", "white");
+            this(context, "white", "black");
         }
 
         public CanvasColorsBuilder(Context context, String canvasColor, String rectColor) {
             this.builderContext = context;
             this.builderCanvasColor = canvasColor;
             this.builderRectColor = rectColor;
-            builderIsRandom = false;
-            builderRandomColorList = new ArrayList<>();
+            this.builderIsRandom = false;
+            this.builderRandomColorList = new ArrayList<>();
         }
 
         public CanvasColorsBuilder setCanvasColor(String color) {
@@ -138,6 +138,10 @@ public class CanvasColors {
         public CanvasColorsBuilder addToRandomColors(String color) {
             this.builderRandomColorList.add(color);
             return this;
+        }
+
+        public CanvasColors build() {
+            return new CanvasColors(this);
         }
     }
 }
