@@ -10,4 +10,16 @@
                 android:title="Glider Gun"/>
         </menu>
     </item>
+    <item android:title="Colors">
+        <menu>
+            <item android:id="@+id/blackWhiteColorBtn"
+                android:title="Black and White"/>
+            <item android:title="Inverted"
+                android:id="@+id/invertedColorBtn"/>
+            <item android:id="@+id/christmasColorBtn"
+                android:title="Christmas"/>
+            <item android:id="@+id/rainbowColorBtn"
+                android:title="Rainbow"/>
+        </menu>
+    </item>
 </menu>
