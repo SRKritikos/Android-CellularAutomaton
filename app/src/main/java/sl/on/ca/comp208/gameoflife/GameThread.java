@@ -2,6 +2,7 @@ package sl.on.ca.comp208.gameoflife;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.view.SurfaceHolder;
 
 import sl.on.ca.comp208.gameoflife.automatons.IRuleImplementor;
@@ -76,16 +77,31 @@ public class GameThread extends Thread {
         canvas.drawBitmap(this.bitmap, 1, 1, null);
     }
 
+    @Deprecated
     public void initializeGrid(boolean[][] grid) {
-        this.grid = grid;
-        this.ruleImplementor.applyRule(this.grid, numberOfRows, numberOfColumns);
-        this.drawGridOnBitmapCanvas();
-        Canvas canvas = this.holder.lockCanvas();
-        this.drawBitmapOnHolderCanvas(canvas);
-        holder.unlockCanvasAndPost(canvas);
+        this.drawPatternOnGrid(grid);
+        this.start();
     }
 
     public void setColorPalette(ColorPalette colorPalette) {
         this.colorPalette = colorPalette;
+    }
+
+    public void resetGame() {
+        this.interrupt();
+        this.grid = new boolean[numberOfRows][numberOfColumns];
+        this.bitmapCanvas.drawColor(Color.WHITE);
+        this.start();
+    }
+
+    public void drawPatternOnGrid(boolean[][] patternGrid) {
+        for (int row = 0; row < numberOfRows; row++) {
+            for (int col = 0; col < numberOfColumns; col++) {
+                if (patternGrid[row][col]) {
+                    this.grid[row][col] = true;
+                }
+            }
+        }
+        this.start();
     }
 }

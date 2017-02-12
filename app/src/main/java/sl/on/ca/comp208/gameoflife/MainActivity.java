@@ -46,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
                     item.setIcon(R.drawable.ic_action_play);
                 }
                 break;
+            case R.id.resetGameBtn:
+                view.stop();
             case R.id.createGliderBtn:
             case R.id.createGliderGunBtn:
                 view.setPatternProducer(item.getItemId());

@@ -17,7 +17,7 @@ public class GameOfLife implements IRuleImplementor {
     public int shouldDraw( int row, int col) {
         int cellState = -1;
         if (this.currentGeneration == null) {
-
+            //TODO?
         }
         boolean isAliveNow = this.currentGeneration[row][col];
         boolean isAliveNextGen = this.nextGeneration[row][col];

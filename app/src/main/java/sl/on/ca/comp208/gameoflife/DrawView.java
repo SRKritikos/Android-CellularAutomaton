@@ -24,7 +24,7 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
     private boolean isTimerRunning;
     private Timer timer;
     private GameThread gameThread;
-    boolean[][] gridInitialState ;
+    boolean[][] patternGrid;
     private IPatternProducer patternProducer;
     private final int NUMBER_OF_COLS = 100;
     private final int NUMBER_OF_ROWS = 100;
@@ -35,7 +35,11 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
         super(context, attrs);
         this.context = context;
         getHolder().addCallback(this);
-        this.gridInitialState = new boolean[NUMBER_OF_ROWS][NUMBER_OF_COLS];
+        this.resetPatternGrid();
+    }
+
+    private void resetPatternGrid() {
+        this.patternGrid = new boolean[NUMBER_OF_ROWS][NUMBER_OF_COLS];
     }
 
     @Override
@@ -46,6 +50,7 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
                                          getWidth(), getHeight(),
                                          NUMBER_OF_ROWS, NUMBER_OF_COLS,
                                          colorPaletteFactory.getInstance(R.id.blackWhiteColorBtn));
+        this.gameThread.resetGame();
     }
 
     @Override
@@ -64,9 +69,10 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
             int y = (int) event.getY();
             int row = y / (getHeight() / NUMBER_OF_ROWS);
             int col = x / (getWidth() / NUMBER_OF_COLS) ;
-            this.gridInitialState = this.patternProducer
-                    .drawPatternOnGrid(this.gridInitialState, row, col, NUMBER_OF_ROWS, NUMBER_OF_COLS);
-            this.gameThread.initializeGrid(gridInitialState);
+            this.patternGrid = this.patternProducer
+                    .drawPatternOnGrid(this.patternGrid, row, col, NUMBER_OF_ROWS, NUMBER_OF_COLS);
+            this.gameThread.drawPatternOnGrid(patternGrid);
+            this.resetPatternGrid();
         }
         return super.onTouchEvent(event);
     }
@@ -82,8 +88,9 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
         this.timer.schedule(new UIThreadTimerTask(activity, new IGoTime() {
             @Override
             public void go() {
-                if (!gameThread.isAlive())
+                if (!gameThread.isAlive()) {
                     gameThread.start();
+                }
             }
         }), 0, 50);
         this.isTimerRunning = true;
@@ -104,5 +111,10 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
     public void setCanvasColors(int btnId) {
         ColorPalette colorPalette = colorPaletteFactory.getInstance(btnId);
         this.gameThread.setColorPalette(colorPalette);
+    }
+
+    public void stop() {
+        this.stopTimer();
+        this.gameThread.resetGame();
     }
 }
