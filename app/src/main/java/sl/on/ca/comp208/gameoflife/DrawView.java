@@ -11,8 +11,10 @@ import java.util.Timer;
 
 import sl.on.ca.comp208.gameoflife.automatons.AutomatonHelper;
 import sl.on.ca.comp208.gameoflife.automatons.GameOfLife;
-import sl.on.ca.comp208.gameoflife.colors.CanvasColors;
+import sl.on.ca.comp208.gameoflife.colors.ColorPalette;
+import sl.on.ca.comp208.gameoflife.colors.ColorPaletteFactory;
 import sl.on.ca.comp208.gameoflife.patternproducers.IPatternProducer;
+import sl.on.ca.comp208.gameoflife.patternproducers.PatternFactory;
 
 /**
  * Created by srostantkritikos06 on 1/30/2017.
@@ -26,7 +28,8 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
     private IPatternProducer patternProducer;
     private final int NUMBER_OF_COLS = 100;
     private final int NUMBER_OF_ROWS = 100;
-    private CanvasColors canvasColors;
+    private ColorPaletteFactory colorPaletteFactory;
+    private PatternFactory patternFactory;
 
     public DrawView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -34,17 +37,6 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
         getHolder().addCallback(this);
         this.gridInitialState = new boolean[NUMBER_OF_ROWS][NUMBER_OF_COLS];
     }
-    
-//    private void drawGridLines() {
-//        int width = getWidth();
-//        int height = getHeight();
-//        for (int i = 1; i < NUMBER_OF_COLS; i++) {
-//            this.bitmapCanvas.drawLine(i * cellWidth, 0, i * cellWidth, height, blackPaint);
-//        }
-//        for (int i = 1; i < NUMBER_OF_ROWS; i++) {
-//            this.bitmapCanvas.drawLine(0, i * cellHeight, width, i * cellHeight, blackPaint);
-//        }
-//    }
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
@@ -53,7 +45,7 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
         this.gameThread = new GameThread(gameOfLife, surfaceHolder,
                                          getWidth(), getHeight(),
                                          NUMBER_OF_ROWS, NUMBER_OF_COLS,
-                                         new CanvasColors.CanvasColorsBuilder(context).build());
+                                         colorPaletteFactory.getInstance(R.id.blackWhiteColorBtn));
     }
 
     @Override
@@ -90,17 +82,27 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
         this.timer.schedule(new UIThreadTimerTask(activity, new IGoTime() {
             @Override
             public void go() {
-                gameThread.start();
+                if (!gameThread.isAlive())
+                    gameThread.start();
             }
         }), 0, 50);
         this.isTimerRunning = true;
     }
 
-    public void setPatternProducer(IPatternProducer patternProducer) {
-        this.patternProducer = patternProducer;
+    public void setPatternFactory(PatternFactory patternFactory) {
+        this.patternFactory = patternFactory;
     }
 
-    public void setCanvasColors(CanvasColors canvasColors) {
-        this.canvasColors = canvasColors;
+    public void setColorPaletteFactory(ColorPaletteFactory colorPaletteFactory) {
+        this.colorPaletteFactory = colorPaletteFactory;
+    }
+
+    public void setPatternProducer(int btnId) {
+        this.patternProducer = this.patternFactory.getInstance(btnId);
+    }
+
+    public void setCanvasColors(int btnId) {
+        ColorPalette colorPalette = colorPaletteFactory.getInstance(btnId);
+        this.gameThread.setColorPalette(colorPalette);
     }
 }

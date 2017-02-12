@@ -6,8 +6,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import sl.on.ca.comp208.gameoflife.colors.ColorPaletteBuilder;
+import sl.on.ca.comp208.gameoflife.colors.ColorPaletteFactory;
 import sl.on.ca.comp208.gameoflife.patternproducers.PatternFactory;
-import sl.on.ca.comp208.gameoflife.patternproducers.IPatternProducer;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -17,7 +18,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         view = (DrawView) findViewById(R.id.canvas);
-
+        ColorPaletteBuilder colorPaletteBuilder = new ColorPaletteBuilder(this);
+        PatternFactory patternFactory = new PatternFactory();
+        ColorPaletteFactory colorPaletteFactory = new ColorPaletteFactory(colorPaletteBuilder);
+        this.view.setColorPaletteFactory(colorPaletteFactory);
+        this.view.setPatternFactory(patternFactory);
     }
 
     @Override
@@ -34,16 +39,22 @@ public class MainActivity extends AppCompatActivity {
                 if (item.getTitle().toString().equals("Start")) {
                     view.startTimer();
                     item.setTitle(R.string.pause_game);
+                    item.setIcon(R.drawable.ic_action_pause);
                 } else if (item.getTitle().toString().equals("Pause")) {
                     view.stopTimer();
                     item.setTitle(R.string.start_game);
+                    item.setIcon(R.drawable.ic_action_play);
                 }
                 break;
             case R.id.createGliderBtn:
             case R.id.createGliderGunBtn:
-                IPatternProducer patternProducer = PatternFactory.getInstance(item.getItemId());
-                view.setPatternProducer(patternProducer);
+                view.setPatternProducer(item.getItemId());
                 break;
+            case R.id.blackWhiteColorBtn:
+            case R.id.invertedColorBtn:
+            case R.id.christmasColorBtn:
+            case R.id.rainbowColorBtn:
+                view.setCanvasColors(item.getItemId());
         }
         return super.onOptionsItemSelected(item);
     }

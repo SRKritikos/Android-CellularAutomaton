@@ -10,10 +10,9 @@ import sl.on.ca.comp208.gameoflife.R;
  */
 
 public class PatternFactory {
-    private static Map<Integer, IPatternProducer> patternProducerMap;
-    protected PatternFactory(){}
+    private Map<Integer, IPatternProducer> patternProducerMap;
 
-    static {
+    public PatternFactory(){
         patternProducerMap = new HashMap<>();
         GliderCreator gliderCreator = new GliderCreator();
         GliderGunCreator gliderGunCreator = new GliderGunCreator();
@@ -21,7 +20,7 @@ public class PatternFactory {
         patternProducerMap.put(R.id.createGliderGunBtn, gliderGunCreator);
     }
 
-    public static IPatternProducer getInstance(int id) {
+    public IPatternProducer getInstance(int id) {
         return patternProducerMap.get(id);
     }
 }
