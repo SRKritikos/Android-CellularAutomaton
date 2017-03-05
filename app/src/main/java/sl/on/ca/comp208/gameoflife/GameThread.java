@@ -27,9 +27,10 @@ public class GameThread extends Thread {
     private Canvas bitmapCanvas;
     private ColorPalette colorPalette;
 
-    public GameThread(IRuleImplementor ruleImplementor, SurfaceHolder holder,
+    public GameThread(AtomicBoolean[][] grid, IRuleImplementor ruleImplementor, SurfaceHolder holder,
                       int width, int height, int numberOfRows, int numberOfColumns,
                       ColorPalette colorPalette) {
+        this.grid = grid;
         this.ruleImplementor = ruleImplementor;
         this.holder = holder;
         this.height = height;
@@ -44,14 +45,14 @@ public class GameThread extends Thread {
     @Override
     public void run() {
         super.run();
-        this.ruleImplementor.applyRule(grid, numberOfRows, numberOfColumns);
-        this.drawGridOnBitmapCanvas();
         Canvas canvas = this.holder.lockCanvas();
         if (canvas != null) {
             synchronized (holder) {
+                this.ruleImplementor.applyRule(grid, numberOfRows, numberOfColumns);
+                this.drawGridOnBitmapCanvas();
                 this.drawBitmapOnHolderCanvas(canvas);
                 holder.unlockCanvasAndPost(canvas);
-                this.grid = this.ruleImplementor.getNextGeneration();
+                DrawView.currentGeneration = this.ruleImplementor.getNextGeneration();
             }
         }
     }
@@ -78,34 +79,5 @@ public class GameThread extends Thread {
     private void drawBitmapOnHolderCanvas(Canvas canvas) {
         canvas.drawColor(this.colorPalette.getCanvasColor().getColor());
         canvas.drawBitmap(this.bitmap, 1, 1, null);
-    }
-
-
-    private void initializeGrid() {
-        this.grid = new AtomicBoolean[numberOfRows][numberOfColumns];
-        for (int row = 0; row < numberOfRows; row++) {
-            for (int col = 0; col < numberOfColumns; col++) {
-                grid[row][col] = new AtomicBoolean(false);
-            }
-        }
-    }
-
-    public void setColorPalette(ColorPalette colorPalette) {
-        this.colorPalette = colorPalette;
-    }
-
-    public void resetGame() {
-        initializeGrid();
-        this.bitmapCanvas.drawColor(Color.WHITE);
-    }
-
-    public void drawPatternOnGrid(AtomicBoolean[][] patternGrid) {
-        for (int row = 0; row < numberOfRows; row++) {
-            for (int col = 0; col < numberOfColumns; col++) {
-                if (patternGrid[row][col].get()) {
-                    this.grid[row][col].compareAndSet(false, true);
-                }
-            }
-        }
     }
 }

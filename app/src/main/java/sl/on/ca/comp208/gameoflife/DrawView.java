@@ -26,12 +26,13 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
     private boolean isTimerRunning;
     private Timer timer;
     private GameThread gameThread;
-    AtomicBoolean[][] patternGrid;
+    public static AtomicBoolean[][] currentGeneration;
     private IPatternProducer patternProducer;
     private final int NUMBER_OF_COLS = 100;
     private final int NUMBER_OF_ROWS = 100;
     private ColorPaletteFactory colorPaletteFactory;
     private PatternFactory patternFactory;
+    private int currentColorBtn;
 
     public DrawView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -42,24 +43,17 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
     }
 
     private void resetPatternGrid() {
-        this.patternGrid = new AtomicBoolean[NUMBER_OF_ROWS][NUMBER_OF_COLS];
+        this.currentGeneration = new AtomicBoolean[NUMBER_OF_ROWS][NUMBER_OF_COLS];
         for (int row = 0; row < NUMBER_OF_ROWS; row++) {
             for (int col = 0; col <NUMBER_OF_COLS; col++) {
-                this.patternGrid[row][col] = new AtomicBoolean(false);
+                this.currentGeneration[row][col] = new AtomicBoolean(false);
             }
         }
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
-        AutomatonHelper automatonHelper = new AutomatonHelper();
-        GameOfLife gameOfLife = new GameOfLife(automatonHelper);
-        this.gameThread = new GameThread(gameOfLife, surfaceHolder,
-                                         getWidth(), getHeight(),
-                                         NUMBER_OF_ROWS, NUMBER_OF_COLS,
-                                         colorPaletteFactory.getInstance(R.id.blackWhiteColorBtn));
-        this.gameThread.resetGame();
-        this.gameThread.start();
+        startGame();
     }
 
     @Override
@@ -76,15 +70,13 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
         if (action == MotionEvent.ACTION_DOWN) {
             int x = (int) event.getX();
             int y = (int) event.getY();
-            int row = y / (getHeight() / NUMBER_OF_ROWS);
-            int col = x / (getWidth() / NUMBER_OF_COLS) ;
+            int col = y / (getHeight() / NUMBER_OF_COLS);
+            int row = x / (getWidth() / NUMBER_OF_ROWS) ;
             Log.i("Game Thread", "Row Col " + row + " " + col);
-            this.patternGrid = this.patternProducer
-                    .drawPatternOnGrid(this.patternGrid, row, col, NUMBER_OF_ROWS, NUMBER_OF_COLS);
-            this.patternGrid[row][col].set(true);
-            this.gameThread.drawPatternOnGrid(patternGrid);
-            this.gameThread.start();
-            this.resetPatternGrid();
+            this.currentGeneration = this.patternProducer
+                    .drawPatternOnGrid(this.currentGeneration, row, col, NUMBER_OF_ROWS, NUMBER_OF_COLS);
+            this.drawPatternOnGrid(currentGeneration);
+            startGame();
         }
         return super.onTouchEvent(event);
     }
@@ -96,15 +88,26 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
 
     public void startTimer() {
         Activity activity = (Activity) this.context;
+        this.timer = new Timer();
         this.timer.schedule(new UIThreadTimerTask(activity, new IGoTime() {
             @Override
             public void go() {
                 if (!gameThread.isAlive()) {
-                    gameThread.start();
+                    startGame();
                 }
             }
         }), 0, 50);
         this.isTimerRunning = true;
+    }
+
+    private void startGame() {
+        AutomatonHelper automatonHelper = new AutomatonHelper();
+        GameOfLife gameOfLife = new GameOfLife(automatonHelper);
+        this.gameThread = new GameThread(currentGeneration, gameOfLife, getHolder(),
+                getWidth(), getHeight(),
+                NUMBER_OF_ROWS, NUMBER_OF_COLS,
+                colorPaletteFactory.getInstance(currentColorBtn));
+        this.gameThread.start();
     }
 
     public void setPatternFactory(PatternFactory patternFactory) {
@@ -120,13 +123,23 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
     }
 
     public void setCanvasColors(int btnId) {
-        ColorPalette colorPalette = colorPaletteFactory.getInstance(btnId);
-        this.gameThread.setColorPalette(colorPalette);
+        this.currentColorBtn = btnId;
     }
 
     public void stopAndRestart() {
         this.stopTimer();
-        this.gameThread.resetGame();
-        this.gameThread.start();
+        this.gameThread.interrupt();
+        this.resetPatternGrid();
+        startGame();
+    }
+
+    public void drawPatternOnGrid(AtomicBoolean[][] patternGrid) {
+        for (int row = 0; row < NUMBER_OF_ROWS; row++) {
+            for (int col = 0; col < NUMBER_OF_COLS; col++) {
+                if (patternGrid[row][col].get()) {
+                    this.currentGeneration[row][col].compareAndSet(false, true);
+                }
+            }
+        }
     }
 }

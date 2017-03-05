@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
         this.view.setColorPaletteFactory(colorPaletteFactory);
         this.view.setPatternFactory(patternFactory);
         this.view.setPatternProducer(R.id.createSingleCellBtn);
+        this.view.setCanvasColors(R.id.blackWhiteColorBtn);
     }
 
     @Override
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.resetGameBtn:
                 view.stopAndRestart();
+                break;
             case R.id.createGliderBtn:
             case R.id.createGliderGunBtn:
             case R.id.createSingleCellBtn:
@@ -59,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.christmasColorBtn:
             case R.id.rainbowColorBtn:
                 view.setCanvasColors(item.getItemId());
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

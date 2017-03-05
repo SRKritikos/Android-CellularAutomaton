@@ -7,10 +7,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 
 public class GliderGunCreator implements IPatternProducer{
-    final int GLIDER_MAX_COL = 17;
-    final int GLIDER_MIN_COL = -18;
-    final int GLIDER_MAX_ROW = 3;
-    final int GLIDER_MIN_ROW = -5;
+    final int GLIDER_MAX_COL = 3;
+    final int GLIDER_MIN_COL = -5;
+    final int GLIDER_MAX_ROW = 17;
+    final int GLIDER_MIN_ROW = -18;
 
     @Override
     public AtomicBoolean[][] drawPatternOnGrid(AtomicBoolean[][] grid, int rowTouched, int colTouched,
@@ -18,8 +18,8 @@ public class GliderGunCreator implements IPatternProducer{
         boolean isInsideColBounds = this.determineColumnBounds(rowTouched, numberOfColumns);
         boolean isInsideRowBounds = this.determineRowBounds(colTouched, numberOfRows);
         if (isInsideColBounds && isInsideRowBounds) {
-            this.drawLeftSide(grid, colTouched, rowTouched);
-            this.drawRightSide(grid, colTouched, rowTouched);
+            this.drawLeftSide(grid, rowTouched, colTouched);
+            this.drawRightSide(grid, rowTouched, colTouched);
         }
         return grid;
     }

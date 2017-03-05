@@ -61,6 +61,4 @@ public class GameOfLife implements IRuleImplementor {
         }
         return isAlive;
     }
-
-
 }

@@ -1,5 +1,7 @@
 package sl.on.ca.comp208.gameoflife.patternproducers;
 
+import android.util.Log;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -17,6 +19,7 @@ public class GliderCreator implements IPatternProducer {
         boolean isInsideColBounds = this.determineColumnBounds(colTouched, numberOfColumns);
         boolean isInsideRowBounds = this.determineRowBounds(rowTouched, numberOfRows);
         if (isInsideColBounds && isInsideRowBounds) {
+            Log.i("Glider Creator", rowTouched + " " + colTouched);
             grid[rowTouched][colTouched - 1].set(true);
             grid[rowTouched + 1][colTouched].set(true);
             grid[rowTouched + 1 ][colTouched + 1].set(true);

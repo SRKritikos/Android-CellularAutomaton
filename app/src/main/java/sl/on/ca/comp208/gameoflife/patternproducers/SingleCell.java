@@ -14,7 +14,7 @@ public class SingleCell implements IPatternProducer {
         boolean isInColumnBounds = this.determineColumnBounds(colTouched, numberOfColumns);
         boolean isInRowBounds = this.determineRowBounds(rowTouched, numberOfRows);
         if (isInColumnBounds && isInRowBounds) {
-            grid[rowTouched][colTouched].set(true);
+            grid[rowTouched][colTouched].compareAndSet(false, true);
         }
         return grid;
     }
