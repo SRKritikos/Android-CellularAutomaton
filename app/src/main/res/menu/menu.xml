@@ -15,6 +15,8 @@
                 android:id="@+id/createGliderBtn"/>
             <item android:id="@+id/createGliderGunBtn"
                 android:title="Glider Gun"/>
+            <item android:title="Single Cell"
+                android:id="@+id/createSingleCellBtn"/>
         </menu>
     </item>
     <item android:title="Colors">

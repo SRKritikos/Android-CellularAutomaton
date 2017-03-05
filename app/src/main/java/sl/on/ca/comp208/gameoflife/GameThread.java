@@ -3,7 +3,10 @@ package sl.on.ca.comp208.gameoflife;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.SurfaceHolder;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import sl.on.ca.comp208.gameoflife.automatons.IRuleImplementor;
 import sl.on.ca.comp208.gameoflife.colors.ColorPalette;
@@ -15,7 +18,7 @@ import sl.on.ca.comp208.gameoflife.colors.ColorPalette;
 public class GameThread extends Thread {
     private IRuleImplementor ruleImplementor;
     private SurfaceHolder holder;
-    private boolean[][] grid;
+    private AtomicBoolean[][] grid;
     private int numberOfColumns;
     private int numberOfRows;
     private int height;
@@ -77,10 +80,14 @@ public class GameThread extends Thread {
         canvas.drawBitmap(this.bitmap, 1, 1, null);
     }
 
-    @Deprecated
-    public void initializeGrid(boolean[][] grid) {
-        this.drawPatternOnGrid(grid);
-        this.start();
+
+    private void initializeGrid() {
+        this.grid = new AtomicBoolean[numberOfRows][numberOfColumns];
+        for (int row = 0; row < numberOfRows; row++) {
+            for (int col = 0; col < numberOfColumns; col++) {
+                grid[row][col] = new AtomicBoolean(false);
+            }
+        }
     }
 
     public void setColorPalette(ColorPalette colorPalette) {
@@ -88,20 +95,17 @@ public class GameThread extends Thread {
     }
 
     public void resetGame() {
-        this.interrupt();
-        this.grid = new boolean[numberOfRows][numberOfColumns];
+        initializeGrid();
         this.bitmapCanvas.drawColor(Color.WHITE);
-        this.start();
     }
 
-    public void drawPatternOnGrid(boolean[][] patternGrid) {
+    public void drawPatternOnGrid(AtomicBoolean[][] patternGrid) {
         for (int row = 0; row < numberOfRows; row++) {
             for (int col = 0; col < numberOfColumns; col++) {
-                if (patternGrid[row][col]) {
-                    this.grid[row][col] = true;
+                if (patternGrid[row][col].get()) {
+                    this.grid[row][col].compareAndSet(false, true);
                 }
             }
         }
-        this.start();
     }
 }

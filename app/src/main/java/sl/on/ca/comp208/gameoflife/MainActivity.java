@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
         ColorPaletteFactory colorPaletteFactory = new ColorPaletteFactory(colorPaletteBuilder);
         this.view.setColorPaletteFactory(colorPaletteFactory);
         this.view.setPatternFactory(patternFactory);
+        this.view.setPatternProducer(R.id.createSingleCellBtn);
     }
 
     @Override
@@ -47,9 +48,10 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.resetGameBtn:
-                view.stop();
+                view.stopAndRestart();
             case R.id.createGliderBtn:
             case R.id.createGliderGunBtn:
+            case R.id.createSingleCellBtn:
                 view.setPatternProducer(item.getItemId());
                 break;
             case R.id.blackWhiteColorBtn:

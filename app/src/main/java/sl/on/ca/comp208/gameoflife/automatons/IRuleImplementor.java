@@ -1,5 +1,7 @@
 package sl.on.ca.comp208.gameoflife.automatons;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * Created by Steven on 2/1/2017.
  */
@@ -14,7 +16,7 @@ public interface IRuleImplementor {
      * @param numberOfRows the number of rows of the grid.
      * @param numberOfColumns the number of columns of the grid.
      */
-    void applyRule(boolean[][] grid, int numberOfRows, int numberOfColumns);
+    void applyRule(AtomicBoolean[][] grid, int numberOfRows, int numberOfColumns);
 
     /**
      * Determines if the cell at row, col on the next generation's grid should be drawn.
@@ -29,5 +31,5 @@ public interface IRuleImplementor {
      * Get the grid state of the next generation
      * @return next generation's grid
      */
-    boolean[][] getNextGeneration();
+    AtomicBoolean[][] getNextGeneration();
 }

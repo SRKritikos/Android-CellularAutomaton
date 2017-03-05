@@ -1,13 +1,17 @@
 package sl.on.ca.comp208.gameoflife.automatons;
 
+import android.util.Log;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * Created by Steven on 2/1/2017.
  */
 
 public class GameOfLife implements IRuleImplementor {
     private AutomatonHelper automatonHelper;
-    private boolean[][] currentGeneration;
-    private boolean[][] nextGeneration;
+    private AtomicBoolean[][] currentGeneration;
+    private AtomicBoolean[][] nextGeneration;
 
     public GameOfLife(AutomatonHelper automatonHelper) {
         this.automatonHelper = automatonHelper;
@@ -19,8 +23,8 @@ public class GameOfLife implements IRuleImplementor {
         if (this.currentGeneration == null) {
             //TODO?
         }
-        boolean isAliveNow = this.currentGeneration[row][col];
-        boolean isAliveNextGen = this.nextGeneration[row][col];
+        boolean isAliveNow = this.currentGeneration[row][col].get();
+        boolean isAliveNextGen = this.nextGeneration[row][col].get();
         if (isAliveNextGen) {
             cellState = 1;
         } else if (isAliveNow && !isAliveNextGen) {
@@ -30,19 +34,20 @@ public class GameOfLife implements IRuleImplementor {
     }
 
     @Override
-    public void applyRule(boolean[][] grid, int numberOfRows, int numberOfColumns) {
+    public void applyRule(AtomicBoolean[][] grid, int numberOfRows, int numberOfColumns) {
         this.currentGeneration = grid;
-        this.nextGeneration = new boolean[numberOfRows][numberOfColumns];
+        this.nextGeneration = new AtomicBoolean[numberOfRows][numberOfColumns];
         for (int row = 0; row < numberOfRows; row++) {
             for (int col = 0; col < numberOfColumns; col++) {
                 int numberOfNeighbours = this.automatonHelper.getNeighbourCount(this.currentGeneration, row, col, numberOfRows, numberOfColumns);
-                this.nextGeneration[row][col] = this.determineLife(numberOfNeighbours, this.currentGeneration[row][col]);
+                boolean isAlive = this.determineLife(numberOfNeighbours, this.currentGeneration[row][col].get());
+                this.nextGeneration[row][col] = new AtomicBoolean(isAlive);
             }
         }
     }
 
     @Override
-    public boolean[][] getNextGeneration() {
+    public AtomicBoolean[][] getNextGeneration() {
         return this.nextGeneration;
     }
 
@@ -56,4 +61,6 @@ public class GameOfLife implements IRuleImplementor {
         }
         return isAlive;
     }
+
+
 }

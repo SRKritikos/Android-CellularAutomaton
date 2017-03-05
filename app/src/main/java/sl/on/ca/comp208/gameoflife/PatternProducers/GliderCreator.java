@@ -1,5 +1,7 @@
 package sl.on.ca.comp208.gameoflife.patternproducers;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * Created by Steven on 2/9/2017.
  */
@@ -9,16 +11,17 @@ public class GliderCreator implements IPatternProducer {
     final int GLIDER_MIN_COL = -1;
     final int GLIDER_MAX_ROW = 1;
     final int GLIDER_MIN_ROW = -1;
+
     @Override
-    public boolean[][] drawPatternOnGrid(boolean[][] grid, int rowTouched, int colTouched, int numberOfRows, int numberOfColumns) {
+    public AtomicBoolean[][] drawPatternOnGrid(AtomicBoolean[][] grid, int rowTouched, int colTouched, int numberOfRows, int numberOfColumns) {
         boolean isInsideColBounds = this.determineColumnBounds(colTouched, numberOfColumns);
         boolean isInsideRowBounds = this.determineRowBounds(rowTouched, numberOfRows);
         if (isInsideColBounds && isInsideRowBounds) {
-            grid[rowTouched][colTouched - 1] = true;
-            grid[rowTouched + 1][colTouched] = true;
-            grid[rowTouched + 1 ][colTouched + 1] = true;
-            grid[rowTouched][colTouched + 1] = true;
-            grid[rowTouched - 1][colTouched + 1] = true;
+            grid[rowTouched][colTouched - 1].set(true);
+            grid[rowTouched + 1][colTouched].set(true);
+            grid[rowTouched + 1 ][colTouched + 1].set(true);
+            grid[rowTouched][colTouched + 1].set(true);
+            grid[rowTouched - 1][colTouched + 1].set(true);
         }
         return grid;
     }

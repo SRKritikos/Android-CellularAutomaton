@@ -16,8 +16,10 @@ public class PatternFactory {
         patternProducerMap = new HashMap<>();
         GliderCreator gliderCreator = new GliderCreator();
         GliderGunCreator gliderGunCreator = new GliderGunCreator();
+        SingleCell singleCell = new SingleCell();
         patternProducerMap.put(R.id.createGliderBtn, gliderCreator);
         patternProducerMap.put(R.id.createGliderGunBtn, gliderGunCreator);
+        patternProducerMap.put(R.id.createSingleCellBtn, singleCell);
     }
 
     public IPatternProducer getInstance(int id) {
