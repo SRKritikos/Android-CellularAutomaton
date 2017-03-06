@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -13,7 +14,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import sl.on.ca.comp208.gameoflife.automatons.AutomatonHelper;
 import sl.on.ca.comp208.gameoflife.automatons.GameOfLife;
-import sl.on.ca.comp208.gameoflife.colors.ColorPalette;
 import sl.on.ca.comp208.gameoflife.colors.ColorPaletteFactory;
 import sl.on.ca.comp208.gameoflife.patternproducers.IPatternProducer;
 import sl.on.ca.comp208.gameoflife.patternproducers.PatternFactory;
@@ -33,12 +33,66 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
     private ColorPaletteFactory colorPaletteFactory;
     private PatternFactory patternFactory;
     private int currentColorBtn;
+    private int currentPatternBtn;
+    private GestureDetector gestureDetector;
 
     public DrawView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
         getHolder().addCallback(this);
         this.resetPatternGrid();
+        this.gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onDown(MotionEvent e) {
+                return true;
+            }
+
+            @Override
+            public boolean onDoubleTapEvent(MotionEvent event) {
+                int x = (int) event.getX();
+                int y = (int) event.getY();
+                int row = y / (getHeight() / NUMBER_OF_COLS);
+                int col = x / (getWidth() / NUMBER_OF_ROWS) ;
+                boolean isTopLeft = col < (NUMBER_OF_COLS / 2) && row < (NUMBER_OF_ROWS / 2);
+                boolean isTopRight = col > (NUMBER_OF_COLS / 2) && row < (NUMBER_OF_ROWS / 2);
+                boolean isBotLeft = col < (NUMBER_OF_COLS / 2) && row > (NUMBER_OF_ROWS / 2);
+                IPatternProducer patternProducer;
+                AtomicBoolean[][] patternGrid;
+                if (isTopLeft) {
+                     patternProducer = patternFactory.getInstance(R.id.createTopLeftGliderBtn);
+                     patternGrid = patternProducer
+                            .drawPatternOnGrid(currentGeneration, 5, 5, NUMBER_OF_ROWS, NUMBER_OF_COLS);
+                } else if (isTopRight) {
+                    patternProducer = patternFactory.getInstance(R.id.createTopRightGliderBtn);
+                    patternGrid = patternProducer
+                            .drawPatternOnGrid(currentGeneration, 85, 5, NUMBER_OF_ROWS, NUMBER_OF_COLS);
+                } else if (isBotLeft) {
+                    patternProducer = patternFactory.getInstance(R.id.createBotLeftGliderBtn);
+                    patternGrid = patternProducer
+                            .drawPatternOnGrid(currentGeneration, 5, 85, NUMBER_OF_ROWS, NUMBER_OF_COLS);
+                } else {
+                    patternProducer = patternFactory.getInstance(R.id.createBotRightGliderBtn);
+                    patternGrid = patternProducer
+                            .drawPatternOnGrid(currentGeneration, 85, 85, NUMBER_OF_ROWS, NUMBER_OF_COLS);
+                }
+                drawPatternOnGrid(patternGrid);
+                startGame();
+                return super.onDoubleTapEvent(event);
+            }
+
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent event) {
+                int x = (int) event.getX();
+                int y = (int) event.getY();
+                int row = y / (getHeight() / NUMBER_OF_COLS);
+                int col = x / (getWidth() / NUMBER_OF_ROWS) ;
+                AtomicBoolean[][] patternGrid = patternProducer
+                        .drawPatternOnGrid(currentGeneration, col, row, NUMBER_OF_ROWS, NUMBER_OF_COLS);
+                drawPatternOnGrid(patternGrid);
+                startGame();
+                return super.onSingleTapConfirmed(event);
+            }
+        });
         this.timer = new Timer();
     }
 
@@ -66,19 +120,7 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        int action = event.getAction();
-        if (action == MotionEvent.ACTION_DOWN) {
-            int x = (int) event.getX();
-            int y = (int) event.getY();
-            int col = y / (getHeight() / NUMBER_OF_COLS);
-            int row = x / (getWidth() / NUMBER_OF_ROWS) ;
-            Log.i("Game Thread", "Row Col " + row + " " + col);
-            this.currentGeneration = this.patternProducer
-                    .drawPatternOnGrid(this.currentGeneration, row, col, NUMBER_OF_ROWS, NUMBER_OF_COLS);
-            this.drawPatternOnGrid(currentGeneration);
-            startGame();
-        }
-        return super.onTouchEvent(event);
+        return this.gestureDetector.onTouchEvent(event);
     }
 
     public void stopTimer() {
@@ -119,6 +161,7 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
     }
 
     public void setPatternProducer(int btnId) {
+        this.currentPatternBtn = btnId;
         this.patternProducer = this.patternFactory.getInstance(btnId);
     }
 

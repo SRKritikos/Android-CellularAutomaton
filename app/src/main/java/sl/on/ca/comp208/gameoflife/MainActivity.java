@@ -51,7 +51,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.resetGameBtn:
                 view.stopAndRestart();
                 break;
-            case R.id.createGliderBtn:
+            case R.id.createTopLeftGliderBtn:
+            case R.id.createTopRightGliderBtn:
+            case R.id.createBotLeftGliderBtn:
+            case R.id.createBotRightGliderBtn:
             case R.id.createGliderGunBtn:
             case R.id.createSingleCellBtn:
                 view.setPatternProducer(item.getItemId());

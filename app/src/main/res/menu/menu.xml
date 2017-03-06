@@ -11,8 +11,14 @@
         app:showAsAction="ifRoom"/>
     <item android:title="Create">
         <menu>
-            <item android:title="Glider"
-                android:id="@+id/createGliderBtn"/>
+            <item android:title="Top Left Glider"
+                android:id="@+id/createTopLeftGliderBtn"/>
+            <item android:title="Top Right Glider"
+                android:id="@+id/createTopRightGliderBtn"/>
+            <item android:title="Bottom Left Glider"
+                android:id="@+id/createBotLeftGliderBtn"/>
+            <item android:title="Bottom Right Glider"
+                android:id="@+id/createBotRightGliderBtn"/>
             <item android:id="@+id/createGliderGunBtn"
                 android:title="Glider Gun"/>
             <item android:title="Single Cell"
