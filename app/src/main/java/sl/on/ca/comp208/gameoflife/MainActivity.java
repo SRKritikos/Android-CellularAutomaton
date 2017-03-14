@@ -6,7 +6,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -90,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         double amountDeviceMoved = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
         final double moveThreshold = 15D;
         if ( amountDeviceMoved > moveThreshold) {
-            this.view.randomizeBoard();
+            this.view.randomizeGrid();
         }
     }
 

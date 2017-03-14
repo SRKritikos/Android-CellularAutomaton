@@ -22,7 +22,7 @@ import sl.on.ca.comp208.gameoflife.patternproducers.PatternFactory;
 /**
  * Created by srostantkritikos06 on 1/30/2017.
  */
-public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
+public class DrawView extends SurfaceView implements SurfaceHolder.Callback {
     Context context;
     private boolean isTimerRunning;
     private Timer timer;
@@ -111,11 +111,8 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
         }
     }
 
-    public void randomizeBoard() {
-        this.stopTimer();
+    public void randomizeGrid() {
         this.gameRandomizer.randomizeGame(currentGeneration, NUMBER_OF_ROWS, NUMBER_OF_COLS);
-        this.startGame();
-        this.startTimer();
     }
 
     public void drawPatternOnGrid(AtomicBoolean[][] patternGrid) {
