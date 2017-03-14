@@ -3,15 +3,16 @@ package sl.on.ca.comp208.gameoflife;
 import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import java.util.Random;
 import java.util.Timer;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import sl.on.ca.comp208.gameoflife.GameRandomizer.GameRandomizer;
 import sl.on.ca.comp208.gameoflife.automatons.AutomatonHelper;
 import sl.on.ca.comp208.gameoflife.automatons.GameOfLife;
 import sl.on.ca.comp208.gameoflife.colors.ColorPaletteFactory;
@@ -35,13 +36,19 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
     private int currentColorBtn;
     private int currentPatternBtn;
     private GestureDetector gestureDetector;
+    private GameRandomizer gameRandomizer;
 
     public DrawView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
-        getHolder().addCallback(this);
+        this.getHolder().addCallback(this);
         this.resetPatternGrid();
-        this.gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+        this.gestureDetector = new GestureDetector(context, this.createGestureListener());
+        this.timer = new Timer();
+    }
+
+    private GestureDetector.OnGestureListener createGestureListener() {
+        return new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onDown(MotionEvent e) {
                 return true;
@@ -59,8 +66,8 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
                 IPatternProducer patternProducer;
                 AtomicBoolean[][] patternGrid;
                 if (isTopLeft) {
-                     patternProducer = patternFactory.getInstance(R.id.createTopLeftGliderBtn);
-                     patternGrid = patternProducer
+                    patternProducer = patternFactory.getInstance(R.id.createTopLeftGliderBtn);
+                    patternGrid = patternProducer
                             .drawPatternOnGrid(currentGeneration, 5, 5, NUMBER_OF_ROWS, NUMBER_OF_COLS);
                 } else if (isTopRight) {
                     patternProducer = patternFactory.getInstance(R.id.createTopRightGliderBtn);
@@ -92,8 +99,7 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
                 startGame();
                 return super.onSingleTapConfirmed(event);
             }
-        });
-        this.timer = new Timer();
+        };
     }
 
     private void resetPatternGrid() {
@@ -101,6 +107,23 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
         for (int row = 0; row < NUMBER_OF_ROWS; row++) {
             for (int col = 0; col <NUMBER_OF_COLS; col++) {
                 this.currentGeneration[row][col] = new AtomicBoolean(false);
+            }
+        }
+    }
+
+    public void randomizeBoard() {
+        this.stopTimer();
+        this.gameRandomizer.randomizeGame(currentGeneration, NUMBER_OF_ROWS, NUMBER_OF_COLS);
+        this.startGame();
+        this.startTimer();
+    }
+
+    public void drawPatternOnGrid(AtomicBoolean[][] patternGrid) {
+        for (int row = 0; row < NUMBER_OF_ROWS; row++) {
+            for (int col = 0; col < NUMBER_OF_COLS; col++) {
+                if (patternGrid[row][col].get()) {
+                    this.currentGeneration[row][col].compareAndSet(false, true);
+                }
             }
         }
     }
@@ -152,6 +175,15 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
         this.gameThread.start();
     }
 
+    public void stopAndRestart() {
+        this.stopTimer();
+        this.gameThread.interrupt();
+        this.resetPatternGrid();
+        startGame();
+    }
+
+
+
     public void setPatternFactory(PatternFactory patternFactory) {
         this.patternFactory = patternFactory;
     }
@@ -169,20 +201,8 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
         this.currentColorBtn = btnId;
     }
 
-    public void stopAndRestart() {
-        this.stopTimer();
-        this.gameThread.interrupt();
-        this.resetPatternGrid();
-        startGame();
-    }
 
-    public void drawPatternOnGrid(AtomicBoolean[][] patternGrid) {
-        for (int row = 0; row < NUMBER_OF_ROWS; row++) {
-            for (int col = 0; col < NUMBER_OF_COLS; col++) {
-                if (patternGrid[row][col].get()) {
-                    this.currentGeneration[row][col].compareAndSet(false, true);
-                }
-            }
-        }
+    public void setGameRandomizer(GameRandomizer gameRandomizer) {
+        this.gameRandomizer = gameRandomizer;
     }
 }
