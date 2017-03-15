@@ -10,6 +10,7 @@ import android.view.SurfaceView;
 
 import java.util.Random;
 import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import sl.on.ca.comp208.gameoflife.GameRandomizer.GameRandomizer;
@@ -151,14 +152,14 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback {
     public void startTimer() {
         Activity activity = (Activity) this.context;
         this.timer = new Timer();
-        this.timer.schedule(new UIThreadTimerTask(activity, new IGoTime() {
+        this.timer.schedule(new TimerTask() {
             @Override
-            public void go() {
+            public void run() {
                 if (!gameThread.isAlive()) {
                     startGame();
                 }
             }
-        }), 0, 50);
+        }, 0, 50);
         this.isTimerRunning = true;
     }
 

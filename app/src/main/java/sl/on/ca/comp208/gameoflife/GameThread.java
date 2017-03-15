@@ -45,11 +45,11 @@ public class GameThread extends Thread {
     @Override
     public void run() {
         super.run();
+        this.ruleImplementor.applyRule(grid, numberOfRows, numberOfColumns);
+        this.drawGridOnBitmapCanvas();
         Canvas canvas = this.holder.lockCanvas();
-        if (canvas != null) {
-            synchronized (holder) {
-                this.ruleImplementor.applyRule(grid, numberOfRows, numberOfColumns);
-                this.drawGridOnBitmapCanvas();
+        synchronized (holder) {
+            if (canvas != null) {
                 this.drawBitmapOnHolderCanvas(canvas);
                 holder.unlockCanvasAndPost(canvas);
                 DrawView.currentGeneration = this.ruleImplementor.getNextGeneration();
